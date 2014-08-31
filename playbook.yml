@@ -1,0 +1,21 @@
+---
+- hosts: all
+  sudo: yes
+  tasks:
+    - name: add neo4j key
+      apt_key: url=http://debian.neo4j.org/neotechnology.gpg.key state=present
+
+    - name: add the neo4j repo
+      apt_repository: repo='deb http://debian.neo4j.org/repo stable/' 
+
+    - name: install neo4j
+      apt: name=neo4j
+
+    - name: copy neo4j config files
+      copy: src={{ item }} dest=/etc/neo4j/
+      with_items:
+        - neo4j-server.properties
+        - neo4j.properties 
+
+    - name: make sure neo is started
+      service: name=neo4j-service state=restarted
